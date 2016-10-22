@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ParseMetaObject type="reader">
+	<ParseFields className="com.au.sofico.dto.EmployeeParserResponseDTO" targetFieldType="complex">
+		<ParseFields className="com.au.sofico.dto.EmployeeDTO" targetFieldType="complex" targetFieldName="EmployeeDTO">
+			<ParseFields id="employeeId" targetFieldName="EmployeeId" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="integer" />
+			<ParseFields id="employeeName" targetFieldName="EmployeeName" targetFieldLength="25" mandatory="Y" padding="" targetFieldType="string" />
+			<ParseFields id="address" targetFieldName="Address"	targetFieldType="complex" className="com.au.sofico.dto.AddressDTO">
+				<ParseFields id="officeAddress" targetFieldName="OfficeAddress" targetFieldType="complex" className="com.au.sofico.dto.OfficeAddressDTO">
+					<ParseFields id="addressLine1" targetFieldName="AddressLine1" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+					<ParseFields id="addressLine2" targetFieldName="AddressLine2" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+					<ParseFields id="addressLine3" targetFieldName="AddressLine3" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+	
+				</ParseFields>
+				<ParseFields id="homeAddress" targetFieldName="HomeAddress" targetFieldType="complex" className="com.au.sofico.dto.HomeAddressDTO">
+					<ParseFields id="addressLine1" targetFieldName="AddressLine1" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+					<ParseFields id="addressLine2" targetFieldName="AddressLine2" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+					<ParseFields id="addressLine3" targetFieldName="AddressLine3" targetFieldLength="10" mandatory="Y" padding="" targetFieldType="string" />
+	
+				</ParseFields>
+	
+			</ParseFields>
+			<ParseFields id="account" targetFieldName="Account"	targetFieldType="complex" className="com.au.sofico.dto.AccountDTO">
+			<ParseFields id="accountNumber" targetFieldName="AccountNumber" targetFieldLength="7" mandatory="Y" padding="" targetFieldType="integer" />
+			<ParseFields id="accountName" targetFieldName="AccountName" targetFieldLength="25" mandatory="Y" padding="" targetFieldType="string" />
+			</ParseFields>
+	
+		</ParseFields>
+	</ParseFields>
+
+</ParseMetaObject>
