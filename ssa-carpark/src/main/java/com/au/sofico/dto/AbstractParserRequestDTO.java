@@ -13,6 +13,8 @@ public abstract class AbstractParserRequestDTO {
 	private String filePath;
 	
 	private String fileTrfmXmlPath;
+	
+	private String fileType;
 
 	public String getFilePath() {
 		return filePath;
@@ -20,6 +22,14 @@ public abstract class AbstractParserRequestDTO {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public String getParserType() {
+		return fileType;
+	}
+
+	public void setParserType(String parserType) {
+		this.fileType = parserType;
 	}
 
 }
