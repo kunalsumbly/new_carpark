@@ -4,6 +4,7 @@ public class SsaParkingSpotsDetailsDTO {
 	private String parkingNumber;
 	private boolean isVisitorParking;
 	private String originalOwner;
+	private String comments;
 	public String getParkingNumber() {
 		return parkingNumber;
 	}
@@ -22,6 +23,12 @@ public class SsaParkingSpotsDetailsDTO {
 	}
 	public void setVisitorParking(boolean isVisitorParking) {
 		this.isVisitorParking = isVisitorParking;
+	}
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 }

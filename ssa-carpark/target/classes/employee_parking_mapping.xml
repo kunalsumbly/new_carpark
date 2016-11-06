@@ -18,6 +18,7 @@
 		<ParseFields id="ssa_parking_spots" targetFieldName="ParkingNumber"  targetFieldType="string" />
 		<ParseFields id="ssa_parking_spots" targetFieldName="OriginalOwner"  targetFieldType="string" />
 		<ParseFields id="ssa_parking_spots" targetFieldName="VisitorParking"  targetFieldType="boolean" />
+		<ParseFields id="ssa_parking_spots" targetFieldName="Comments"  targetFieldType="string" />
 		
 	</ParseFields>
 	</ParseFields>

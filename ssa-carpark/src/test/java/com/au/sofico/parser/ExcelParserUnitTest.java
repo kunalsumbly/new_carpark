@@ -30,7 +30,7 @@ public class ExcelParserUnitTest extends TestCase {
 			
 			for(int j=0;j<resChildpObj.getSsaParkingSpotsDetails().size();j++){
 				System.out.println(resChildpObj.getSsaParkingSpotsDetails().get(j).getParkingNumber());
-				
+				System.out.println(resChildpObj.getSsaParkingSpotsDetails().get(j).getComments());
 			}
 			
 			
