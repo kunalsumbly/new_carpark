@@ -177,7 +177,7 @@ public abstract class GenericParser
 					break;
 				} else if ("boolean".equals(parseFields.getTargetFieldType())) {
 					Method m = wrapper.getDeclaredMethod("set" + parseFields.getTargetFieldName(), Boolean.TYPE);
-					m.invoke(obj, Boolean.valueOf(strToken.equals("1.0") ? true : false));
+					m.invoke(obj, Boolean.valueOf(strToken.equals("Y") ? true : false));
 					stringArray=removeTheElementFromArray(stringArray,strToken);
 					break;
 				} else if ("date".equals(parseFields.getTargetFieldType())) {

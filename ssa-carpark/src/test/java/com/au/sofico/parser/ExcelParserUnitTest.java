@@ -16,8 +16,8 @@ public class ExcelParserUnitTest extends TestCase {
 
 	public void testParseAbstractParserRequestDTO() throws Exception {
 		AbstractParserRequestDTO requestDTO = new SsaParkingParserRequestDTO() ;
-		requestDTO.setFilePath("X:/spring_projects/projects/ssa-carpark/src/main/resources/employee_details.xlsx");
-		requestDTO.setFileTrfmXmlPath("X:/spring_projects/projects/ssa-carpark/src/main/resources/employee_parking_mapping.xml");
+		requestDTO.setFilePath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_details.xlsx");
+		requestDTO.setFileTrfmXmlPath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_mapping.xml");
 		requestDTO.setParserType("excel");
 		List<AbstractParserResponseDTO>respDTO = excelParser.parse(requestDTO);
 		

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ParseMetaObject type="reader">
+	<ParseFields className="com.au.sofico.dto.SsaParkingParserResponseDTO" targetFieldType="complex">
+	<!-- isList is true for excel reader, where u want to read all the cells and populate the object -->
+	<ParseFields className="com.au.sofico.dto.SsaEmployeeDetailsDTO"  targetFieldType="complex"  id="ssa_employees" isList="true" targetFieldName="SsaEmployeeDetails">
+		<!--  id in case of excel sheet maps to the sheet name, so all the fields on the same sheet have the same id -->
+		<ParseFields id="ssa_employees" targetFieldName="EmployeeId"  targetFieldType="string" />
+		<ParseFields id="ssa_employees" targetFieldName="EmployeeName"  targetFieldType="string" />
+		<ParseFields id="ssa_employees" targetFieldName="DateOfJoining"  targetFieldType="date" />
+		<ParseFields id="ssa_employees" targetFieldName="AbsentFromDate"  targetFieldType="date" />
+		<ParseFields id="ssa_employees" targetFieldName="AbsentToDate"  targetFieldType="date" />
+		<ParseFields id="ssa_employees" targetFieldName="NeedsParking"  targetFieldType="boolean" />
+		<ParseFields id="ssa_employees" targetFieldName="EmployeeEmailAddress"  targetFieldType="string" />
+		<ParseFields id="ssa_employees" targetFieldName="EmployeeGroupEmailAddress"  targetFieldType="string" />
+		
+	</ParseFields>
+	<ParseFields className="com.au.sofico.dto.SsaParkingSpotsDetailsDTO"  id="ssa_parking_spots" targetFieldType="complex"  isList="true" targetFieldName="SsaParkingSpotsDetails">
+		<ParseFields id="ssa_parking_spots" targetFieldName="ParkingNumber"  targetFieldType="string" />
+		<ParseFields id="ssa_parking_spots" targetFieldName="OriginalOwner"  targetFieldType="string" />
+		<ParseFields id="ssa_parking_spots" targetFieldName="VisitorParking"  targetFieldType="boolean" />
+		
+	</ParseFields>
+	</ParseFields>
+</ParseMetaObject>
