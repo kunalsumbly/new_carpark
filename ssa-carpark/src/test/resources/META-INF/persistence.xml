@@ -25,6 +25,7 @@
 		<!-- <non-jta-data-source>java:comp/env/jdbc/images</non-jta-data-source> -->
 		<class>com.au.sofico.dao.entity.SsaEmployees</class>
 		<class>com.au.sofico.dao.entity.SsaParkingSpots</class>
+		<!-- <class>com.au.sofico.dao.entity.SsaEmployeeParkingMapping</class> -->
 		<properties>
 			<!-- Database connection settings -->
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -34,7 +35,7 @@
 			<!-- SQL dialect -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<!-- Create/update tables automatically using mapping metadata -->
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<!-- <property name="hibernate.hbm2ddl.auto" value="update" /> -->
 			<!-- Pretty print the SQL in the log file and console -->
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.show_sql" value="true" />

@@ -17,6 +17,7 @@ import com.au.sofico.dto.SsaParkingParserRequestDTO;
 import com.au.sofico.dto.SsaParkingParserResponseDTO;
 import com.au.sofico.dto.SsaParkingSpotsDetailsDTO;
 import com.au.sofico.parser.ExcelParser;
+import com.au.sofico.util.JPAUtil;
 
 
 public class SsaBookParkingService implements IssaBookParkingService{
@@ -129,6 +130,13 @@ public class SsaBookParkingService implements IssaBookParkingService{
 		}
 		
 		// need to save the map in database using jpa and hibernate
+		
+		JPAUtil.beginTransaction();
+		
+		
+		
+		
+		JPAUtil.commitTransaction();
 		
 		return false;
 	}

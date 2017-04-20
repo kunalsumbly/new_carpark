@@ -37,9 +37,9 @@ public class JPAUtil {
 				return false;
 			}
 		} finally {
-			/*if (em != null) {
-				em.close();
-			}*/
+			if (em != null) {
+				//em.close();
+			}
 		}
 		return true;
 	}

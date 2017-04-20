@@ -19,6 +19,7 @@ public class JPAUtilUnitTest extends TestCase {
 		
 		
 		SsaEmployees employee = new SsaEmployees();
+		/*SsaEmployeeParkingMapping mapping = new SsaEmployeeParkingMapping();*/
 		
 		employee.setAbsentFromDate(Calendar.getInstance().getTime());
 		employee.setAbsentToDate(Calendar.getInstance().getTime());
@@ -26,6 +27,10 @@ public class JPAUtilUnitTest extends TestCase {
 		employee.setEmployeeEmail("kunal.sumbly@gmail.com");
 		employee.setGroupEmail("kunal.sumbly@gmail.com");
 		employee.setSsaEmployeeName("KUSU");
+		
+		//mapping.setSsaEmployees(employee);;
+		//employee.setSsaEmployeeParkingMappings(mapping);
+		
 		/*SsaEmployeeParkingMapping mapping = new SsaEmployeeParkingMapping();
 		mapping.setSsaEmployees(employee);
 	
@@ -37,12 +42,20 @@ public class JPAUtilUnitTest extends TestCase {
 		parkingSpot.setIsSpecialParkingSpot(0);
 		parkingSpot.setSsaParkingNumber("172");
 		parkingSpot.setOriginalParkingOwnerName("MACE");
-		employee.setSsaParkingSpotses(parkingSpot);
+		//mapping.setSsaParkingSpots(parkingSpot);
+		//parkingSpot.setSsaEmployeeParkingMappings(mapping);
+		//em.persist(parkingSpot);
+		employee.setSsaParkingSpots(parkingSpot);
+		
+		//em.persist(parkingSpot); // save the child before parent
+		em.persist(employee);
+		
+		//mapping.getSsaParkingSpots(
 		//parkingSpot.setSsaEmployeesId(employee.getSsaEmployeeName());
 		//parkingSpot.setSsaEmployees(employee); // this means parking spot entity is the parent of the relation (relation goes from parking spot entity to Employee entity{parking spot -----> employee}) 
 		//employee.setSsaParkingSpotses(parkingSpot); // this means employee is the parent of the relation (relation goes from employee entity to parking spot entity{employee ---> parking spot})
 		//em.persist(parkingSpot);
-		em.persist(employee);
+		//em.persist(mapping);
 		jpaUtil.commitTransaction();
 		
 		
@@ -51,13 +64,13 @@ public class JPAUtilUnitTest extends TestCase {
 	}
 	
 	public void testDeleteParkingLiknage() throws Exception {
-		EntityManager em =  jpaUtil.getEntityManager();
-		jpaUtil.beginTransaction();
-		
-		SsaEmployees employee = em.find(SsaEmployees.class, 8);
-		em.remove(employee);
+		/*EntityManager em =  jpaUtil.getEntityManager();
+		jpaUtil.beginTransaction();		
+		SsaEmployees employee = em.find(SsaEmployees.class, 7);
+		//SsaParkingSpots SsaParkingSpots = em.find(SsaParkingSpots.class, employee.getSsaEmployeesId());
+		em.remove(employee.getSsaParkingSpotses());
 		//em.flush();
-		jpaUtil.commitTransaction();
+		jpaUtil.commitTransaction();*/
 		
 		
 	}
