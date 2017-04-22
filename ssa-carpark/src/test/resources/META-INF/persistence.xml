@@ -25,7 +25,7 @@
 		<!-- <non-jta-data-source>java:comp/env/jdbc/images</non-jta-data-source> -->
 		<class>com.au.sofico.dao.entity.SsaEmployees</class>
 		<class>com.au.sofico.dao.entity.SsaParkingSpots</class>
-		<!-- <class>com.au.sofico.dao.entity.SsaEmployeeParkingMapping</class> -->
+		 <class>com.au.sofico.dao.entity.SsaEmployeeParkingMapping</class>
 		<properties>
 			<!-- Database connection settings -->
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />

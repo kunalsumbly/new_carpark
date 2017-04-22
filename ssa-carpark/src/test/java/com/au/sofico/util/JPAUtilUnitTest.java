@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import javax.persistence.EntityManager;
 
+import com.au.sofico.dao.entity.SsaEmployeeParkingMapping;
+import com.au.sofico.dao.entity.SsaEmployeeParkingMappingId;
 import com.au.sofico.dao.entity.SsaEmployees;
 import com.au.sofico.dao.entity.SsaParkingSpots;
 
@@ -63,14 +65,36 @@ public class JPAUtilUnitTest extends TestCase {
 		
 	}
 	
-	public void testDeleteParkingLiknage() throws Exception {
-		/*EntityManager em =  jpaUtil.getEntityManager();
-		jpaUtil.beginTransaction();		
-		SsaEmployees employee = em.find(SsaEmployees.class, 7);
-		//SsaParkingSpots SsaParkingSpots = em.find(SsaParkingSpots.class, employee.getSsaEmployeesId());
-		em.remove(employee.getSsaParkingSpotses());
+	public void testfetchParkingLiknage() throws Exception {
+		EntityManager em =  jpaUtil.getEntityManager();
+		//jpaUtil.beginTransaction();		
+		SsaEmployeeParkingMappingId linkID = new SsaEmployeeParkingMappingId();
+		/*SsaEmployees emp = em.find(SsaEmployees.class, 7);
+		SsaParkingSpots spot = em.find(SsaParkingSpots.class, 7);*/
+		linkID.setSsaEmployeeId(7);
+		linkID.setSsaParkingSpotId(7);
+		SsaEmployeeParkingMapping mappingEntity =  em.find( SsaEmployeeParkingMapping.class,linkID);  
+		System.out.println("entity found "+mappingEntity.getId().getSsaParkingSpotId());
 		//em.flush();
-		jpaUtil.commitTransaction();*/
+		//jpaUtil.commitTransaction();
+		
+		
+	}
+	
+	public void testDeleteParkingLiknage() throws Exception {
+		EntityManager em =  jpaUtil.getEntityManager();
+		jpaUtil.beginTransaction();		
+		SsaEmployeeParkingMappingId linkID = new SsaEmployeeParkingMappingId();
+		/*SsaEmployees emp = em.find(SsaEmployees.class, 7);
+		SsaParkingSpots spot = em.find(SsaParkingSpots.class, 7);*/
+		linkID.setSsaEmployeeId(7);
+		linkID.setSsaParkingSpotId(7);
+		SsaEmployeeParkingMapping mappingEntity =  em.find( SsaEmployeeParkingMapping.class,linkID); 
+		 em.remove(mappingEntity);
+		  mappingEntity =  em.find( SsaEmployeeParkingMapping.class,linkID);
+		System.out.println("entity found "+mappingEntity);
+		//em.flush();
+		jpaUtil.commitTransaction();
 		
 		
 	}
