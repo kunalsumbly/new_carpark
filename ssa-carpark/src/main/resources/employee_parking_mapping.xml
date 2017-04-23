@@ -13,6 +13,7 @@
 		<ParseFields id="ssa_employees" targetFieldName="EmployeeEmailAddress"  targetFieldType="string" />
 		<ParseFields id="ssa_employees" targetFieldName="EmployeeGroupEmailAddress"  targetFieldType="string" />
 		
+		
 	</ParseFields>
 	<ParseFields className="com.au.sofico.dto.SsaParkingSpotsDetailsDTO"  id="ssa_parking_spots" targetFieldType="complex"  isList="true" targetFieldName="SsaParkingSpotsDetails">
 		<ParseFields id="ssa_parking_spots" targetFieldName="ParkingNumber"  targetFieldType="string" />

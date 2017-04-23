@@ -17,21 +17,42 @@ public class SsaParkingSpots implements java.io.Serializable {
 	private Integer ssaParkingSpotsId;
 	@Column(name = "ssa_parking_number")
 	private String ssaParkingNumber;
-	@Column(name = "is_special_parking_spot")
-	private Integer isSpecialParkingSpot;
+	
 	@Column(name = "original_parking_owner_name")
 	private String originalParkingOwnerName;
-	@Column(name = "is_original_owner")
-	private Integer isOriginalOwner;
+	@Column(name = "is_visitor_parking")
+	private Integer isVisitorParking;
 	
+	@Column(name = "parking_label")
+	private String parkingLabel;
+	
+	
+	
+	public String getParkingLabel() {
+		return parkingLabel;
+	}
+
+
+	public void setParkingLabel(String parkingLabel) {
+		this.parkingLabel = parkingLabel;
+	}
+
+
+	public void setIsVisitorParking(Integer isVisitorParking) {
+		this.isVisitorParking = isVisitorParking;
+	}
+
+	
+	public Integer getIsVisitorParking() {
+		return this.isVisitorParking;
+	}
 
 	public SsaParkingSpots() {
 	}
 
-	public SsaParkingSpots(Integer isOriginalOwner, Integer isSpecialParkingSpot, String originalParkingOwnerName,
+	public SsaParkingSpots(Integer isVisitorParking, String originalParkingOwnerName,
 			String ssaParkingNumber) {
-		this.isOriginalOwner = isOriginalOwner;
-		this.isSpecialParkingSpot = isSpecialParkingSpot;
+		this.isVisitorParking = isVisitorParking;
 		this.originalParkingOwnerName = originalParkingOwnerName;
 		this.ssaParkingNumber = ssaParkingNumber;
 	}
@@ -44,22 +65,9 @@ public class SsaParkingSpots implements java.io.Serializable {
 		this.ssaParkingSpotsId = ssaParkingSpotsId;
 	}
 
-	public Integer getIsOriginalOwner() {
-		return this.isOriginalOwner;
-	}
+	
 
-	public void setIsOriginalOwner(Integer isOriginalOwner) {
-		this.isOriginalOwner = isOriginalOwner;
-	}
-
-	public Integer getIsSpecialParkingSpot() {
-		return this.isSpecialParkingSpot;
-	}
-
-	public void setIsSpecialParkingSpot(Integer isSpecialParkingSpot) {
-		this.isSpecialParkingSpot = isSpecialParkingSpot;
-	}
-
+	
 	public String getOriginalParkingOwnerName() {
 		return this.originalParkingOwnerName;
 	}

@@ -9,10 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
+import com.au.sofico.dao.ISsaParkingDao;
+import com.au.sofico.dao.SsaParkingDao;
+import com.au.sofico.dao.entity.SsaEmployeeParkingMapping;
+import com.au.sofico.dao.entity.SsaEmployeeParkingMappingId;
+import com.au.sofico.dao.entity.SsaEmployees;
+import com.au.sofico.dao.entity.SsaParkingSpots;
 import com.au.sofico.dto.AbstractParserRequestDTO;
 import com.au.sofico.dto.AbstractParserResponseDTO;
 import com.au.sofico.dto.SsaEmployeeDetailsDTO;
-import com.au.sofico.dto.SsaParkingDetailsDTO;
 import com.au.sofico.dto.SsaParkingParserRequestDTO;
 import com.au.sofico.dto.SsaParkingParserResponseDTO;
 import com.au.sofico.dto.SsaParkingSpotsDetailsDTO;
@@ -22,18 +29,79 @@ import com.au.sofico.util.JPAUtil;
 
 public class SsaBookParkingService implements IssaBookParkingService{
 	
-	private static final String VISITOR_ID = "99";
+	
 	
 	private ExcelParser excelParser = new ExcelParser();
+	
+	private ISsaParkingDao ssaParkingDao = new SsaParkingDao();
+	
+	private JPAUtil jpaUtil = new JPAUtil(); 
 
 	@Override
-	public AbstractParserResponseDTO loadParkingData() throws Exception{
+	public AbstractParserResponseDTO importParkingDataInWorkspaceInMemory() throws Exception{
+
 		AbstractParserRequestDTO requestDTO = new SsaParkingParserRequestDTO() ;
 		requestDTO.setFilePath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_details.xlsx");
 		requestDTO.setFileTrfmXmlPath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_mapping.xml");
 		requestDTO.setParserType("excel");
 		List<AbstractParserResponseDTO>respDTO = excelParser.parse(requestDTO);
+		
+		List<SsaEmployeeDetailsDTO>ssaEmployeeDetailsDTOList= ((SsaParkingParserResponseDTO)respDTO.get(0)).getSsaEmployeeDetails();
+		List<SsaParkingSpotsDetailsDTO>ssaParkingDetailsDTOList= ((SsaParkingParserResponseDTO)respDTO.get(0)).getSsaParkingSpotsDetails();
+		
+		
 		return respDTO.get(0);
+		
+	}
+	@Override
+	public void importParkingDataInWorkspace() throws Exception{
+		AbstractParserRequestDTO requestDTO = new SsaParkingParserRequestDTO() ;
+		requestDTO.setFilePath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_details.xlsx");
+		requestDTO.setFileTrfmXmlPath("C:/Users/kusu/git/ssa-carpark/ssa-carpark/src/main/resources/employee_parking_mapping.xml");
+		requestDTO.setParserType("excel");
+		List<AbstractParserResponseDTO>respDTO = excelParser.parse(requestDTO);
+		
+		List<SsaEmployeeDetailsDTO>ssaEmployeeDetailsDTOList= ((SsaParkingParserResponseDTO)respDTO.get(0)).getSsaEmployeeDetails();
+		List<SsaParkingSpotsDetailsDTO>ssaParkingDetailsDTOList= ((SsaParkingParserResponseDTO)respDTO.get(0)).getSsaParkingSpotsDetails();
+		
+		
+		saveEntities(ssaEmployeeDetailsDTOList, ssaParkingDetailsDTOList);
+	}
+
+
+
+
+	private void saveEntities(List<SsaEmployeeDetailsDTO> ssaEmployeeDetailsDTOList,
+			List<SsaParkingSpotsDetailsDTO> ssaParkingDetailsDTOList) {
+		EntityManager em = jpaUtil.getEntityManager();
+		jpaUtil.beginTransaction();
+
+		// save employee entity to database
+		for (SsaEmployeeDetailsDTO ssaEmployeeDetailsDTO : ssaEmployeeDetailsDTOList) {
+			SsaEmployees employeeEntity = new SsaEmployees();
+			employeeEntity.setAbsentFromDate(ssaEmployeeDetailsDTO.getAbsentFromDate());
+			employeeEntity.setAbsentToDate(ssaEmployeeDetailsDTO.getAbsentToDate());
+			employeeEntity.setDateOfJoining(ssaEmployeeDetailsDTO.getDateOfJoining());
+			employeeEntity.setEmployeeEmail(ssaEmployeeDetailsDTO.getEmployeeEmailAddress());
+			employeeEntity.setGroupEmail(ssaEmployeeDetailsDTO.getEmployeeGroupEmailAddress());
+			employeeEntity.setSsaEmployeeName(ssaEmployeeDetailsDTO.getEmployeeId());
+			employeeEntity.setSsaEmployeeFullName(ssaEmployeeDetailsDTO.getEmployeeName());
+			employeeEntity.setNeedsParking(ssaEmployeeDetailsDTO.getNeedsParking()?1:0);
+			em.persist(employeeEntity);
+
+		}
+
+		// save parking spots entity to database
+		for (SsaParkingSpotsDetailsDTO ssaParkingSpotsDetailsDTO : ssaParkingDetailsDTOList) {
+			SsaParkingSpots parkingSpotEntity = new SsaParkingSpots();
+			parkingSpotEntity.setIsVisitorParking(ssaParkingSpotsDetailsDTO.getVisitorParking() ? 1 : 0);
+			parkingSpotEntity.setOriginalParkingOwnerName(ssaParkingSpotsDetailsDTO.getOriginalOwner());
+			parkingSpotEntity.setSsaParkingNumber(ssaParkingSpotsDetailsDTO.getParkingNumber());
+			parkingSpotEntity.setParkingLabel(ssaParkingSpotsDetailsDTO.getComments());
+			em.persist(parkingSpotEntity);
+		}
+
+		jpaUtil.commitTransaction();
 	}
 
 
@@ -50,8 +118,8 @@ public class SsaBookParkingService implements IssaBookParkingService{
 	 * availability , this parking is assigned to him, other wise goes to the ranking order)
 	 */
 	@Override
-	public boolean allocateParking() throws Exception {
-		SsaParkingParserResponseDTO ssaParkingParserResponseDTO = (SsaParkingParserResponseDTO) loadParkingData();
+	public void allocateDefaultParkingToEmployeesInMemory() throws Exception {
+		SsaParkingParserResponseDTO ssaParkingParserResponseDTO = (SsaParkingParserResponseDTO) importParkingDataInWorkspaceInMemory();
 		List<SsaEmployeeDetailsDTO>ssaEmployeeDetailsDTOList= ssaParkingParserResponseDTO.getSsaEmployeeDetails();
 		List<SsaParkingSpotsDetailsDTO>ssaParkingDetailsDTOList= ssaParkingParserResponseDTO.getSsaParkingSpotsDetails();
 		
@@ -59,7 +127,7 @@ public class SsaBookParkingService implements IssaBookParkingService{
 		Map<String,Boolean> employeePresentMap = new HashMap<String,Boolean>();
 		Map<String,SsaEmployeeDetailsDTO> employeeDetailsMap = new HashMap<String,SsaEmployeeDetailsDTO>();
 		for(SsaEmployeeDetailsDTO ssaEmployeeDetailsDTO:ssaEmployeeDetailsDTOList){
-			boolean isAbsent = isTheEmployeeAbsentToday(ssaEmployeeDetailsDTO.getAbsentFromDate(),ssaEmployeeDetailsDTO.getAbsentToDate(),ssaEmployeeDetailsDTO.getEmployeeName());
+			boolean isAbsent = isTheEmployeeAbsentToday(ssaEmployeeDetailsDTO.getAbsentFromDate(),ssaEmployeeDetailsDTO.getAbsentToDate());
 			if(isAbsent){
 				employeePresentMap.put(ssaEmployeeDetailsDTO.getEmployeeId(), false);
 			}else{
@@ -104,44 +172,43 @@ public class SsaBookParkingService implements IssaBookParkingService{
 				
 			}
 		});
+		
+		Map<String,String> employeeIdNameMap = new HashMap<String,String>();
+		for(SsaEmployeeDetailsDTO ssaEmployeeDetailsDTO:notUsualSuspectsEmployeeDTOList){
+			employeeIdNameMap.put(ssaEmployeeDetailsDTO.getEmployeeName(),ssaEmployeeDetailsDTO.getEmployeeId());
+		}
 				
 		Map<String,String> finalEmployeeParkingSpotMap = new HashMap<String,String>();
 		
-		int i=0,j=i+1;
+		int i=0;
 		for(SsaParkingSpotsDetailsDTO ssaParkingSpotsDetailsDTO:ssaParkingDetailsDTOList){
-			if(!ssaParkingSpotsDetailsDTO.getVisitorParking()){// if not a visitor parking , then do the normal stuff
+			//if(!ssaParkingSpotsDetailsDTO.getVisitorParking()){// if not a visitor parking , then do the normal stuff
 				if("NULL".equals(ssaParkingSpotsDetailsDTO.getOriginalOwner()) || !employeePresentMap.get(ssaParkingSpotsDetailsDTO.getOriginalOwner())){// usual suspects need parking
-					finalEmployeeParkingSpotMap.put(notUsualSuspectsEmployeeDTOList.get(i).getEmployeeName(), ssaParkingSpotsDetailsDTO.getParkingNumber());
-					i++;
+					if(!ssaParkingSpotsDetailsDTO.getVisitorParking()){
+						finalEmployeeParkingSpotMap.put(notUsualSuspectsEmployeeDTOList.get(i).getEmployeeId(), ssaParkingSpotsDetailsDTO.getParkingNumber());
+						i++;
+					}else{
+						if(employeeIdNameMap.get(ssaParkingSpotsDetailsDTO.getComments()) != null){
+							finalEmployeeParkingSpotMap.put(employeeIdNameMap.get(ssaParkingSpotsDetailsDTO.getComments()), ssaParkingSpotsDetailsDTO.getParkingNumber());
+						}else{
+							System.out.println("The visitor employee name does not match the string in the parking comments for that visitor parkingID="+ssaParkingSpotsDetailsDTO.getParkingNumber());
+						}
+					}
+					
 				}else{// usual suspect is present
 					finalEmployeeParkingSpotMap.put(ssaParkingSpotsDetailsDTO.getOriginalOwner(), ssaParkingSpotsDetailsDTO.getParkingNumber());
 				}
-				
-			}else{// visitor parking, cannot be assigned to any employee
-				finalEmployeeParkingSpotMap.put(VISITOR_ID+j, ssaParkingSpotsDetailsDTO.getParkingNumber());
-				j++;
-			}
-			
 		}
 		
 		System.out.println(finalEmployeeParkingSpotMap.size());
 		for(Map.Entry<String,String> itr:finalEmployeeParkingSpotMap.entrySet()){
 			System.out.println("Employee Name =="+itr.getKey() + "Assigned parking =="+itr.getValue());
+			
+			
 		}
-		
-		// need to save the map in database using jpa and hibernate
-		
-		JPAUtil.beginTransaction();
-		
-		
-		
-		
-		JPAUtil.commitTransaction();
-		
-		return false;
 	}
 
-	private boolean isTheEmployeeAbsentToday(Date absentFromDate, Date absentToDate, String employeeName) {
+	private boolean isTheEmployeeAbsentToday(Date absentFromDate, Date absentToDate) {
 		// TODO Auto-generated method stub
 		Date currentDate = Calendar.getInstance().getTime();
 		if(absentFromDate != null && absentToDate != null){
@@ -158,11 +225,173 @@ public class SsaBookParkingService implements IssaBookParkingService{
 		return false;
 	}
 
+
+
+
 	@Override
-	public SsaParkingDetailsDTO fetchParkingDetailsForEmployee(String employeeID) {
+	public List<SsaEmployees> loadAllEmployeeDataFromWorkspace() throws Exception {
+		return ssaParkingDao.loadAllEmployees();
+	}
+
+
+
+
+	@Override
+	public List<SsaParkingSpots> loadAllParkingSpotDataFromWorkspace() throws Exception {
+		// TODO Auto-generated method stub
+		return ssaParkingDao.loadAllParkingSpots();
+	}
+
+
+
+
+	@Override
+	public void allocatedParkingSpotInWorkspace() throws Exception {
+		EntityManager em = jpaUtil.getEntityManager();
+		jpaUtil.beginTransaction();
+		List<SsaEmployees> ssaEmployeeEntityList = loadAllEmployeeDataFromWorkspace();
+		List<SsaParkingSpots> ssaParkingSpotsEntityList = loadAllParkingSpotDataFromWorkspace();
+
+		Map<String, Boolean> employeePresentMap = new HashMap<String, Boolean>();
+		Map<String, SsaEmployees> employeeEntityMap = new HashMap<String, SsaEmployees>();
+		for (SsaEmployees ssaEmployeesEntity : ssaEmployeeEntityList) {
+			boolean isAbsent = isTheEmployeeAbsentToday(ssaEmployeesEntity.getAbsentFromDate(),
+					ssaEmployeesEntity.getAbsentToDate());
+			if (isAbsent) {
+				employeePresentMap.put(ssaEmployeesEntity.getSsaEmployeeName(), false);
+			} else {
+				employeePresentMap.put(ssaEmployeesEntity.getSsaEmployeeName(),
+						ssaEmployeesEntity.getNeedsParking() == 1 ? true : false);
+			}
+			// if present and needs parking
+			employeeEntityMap.put(ssaEmployeesEntity.getSsaEmployeeName(), ssaEmployeesEntity);
+		}
+
+		// this list will have all the employees which don't have permanent
+		// parking spots
+		// Set<String> usualSuspectsEmployeeDTOSet = new HashSet<String>();
+		// Collections.copy(notUsualSuspectsEmployeeDTOList,
+		// ssaEmployeeDetailsDTOList);
+
+		for (SsaParkingSpots ssaParkingSpotsEntity : ssaParkingSpotsEntityList) {
+			for (SsaEmployees ssaEmployeesEntity : ssaEmployeeEntityList) {
+				if (ssaParkingSpotsEntity.getOriginalParkingOwnerName()
+						.equals(ssaEmployeesEntity.getSsaEmployeeName())) {
+					employeeEntityMap.remove(ssaEmployeesEntity.getSsaEmployeeName());
+				}
+			}
+		}
+
+		List<SsaEmployees> notUsualSuspectsEmployeeDTOList = new ArrayList<SsaEmployees>(employeeEntityMap.values());
+
+		// sorting the list based on date of joining, if the same date, compare
+		// of Name
+		Collections.sort(notUsualSuspectsEmployeeDTOList, new Comparator<SsaEmployees>() {
+
+			@Override
+			public int compare(SsaEmployees o1, SsaEmployees o2) {
+				int compare = o1.getDateOfJoining().compareTo(o2.getDateOfJoining());
+				if (compare != 0) {
+					return compare;
+				} else {
+					return o1.getSsaEmployeeFullName().compareTo(o2.getSsaEmployeeFullName());
+				}
+
+			}
+		});
+
+		Map<String, String> employeeNameFullNameMap = new HashMap<String, String>();
+		for (SsaEmployees ssaEmployeesEntity : notUsualSuspectsEmployeeDTOList) {
+			employeeNameFullNameMap.put(ssaEmployeesEntity.getSsaEmployeeFullName(),
+					ssaEmployeesEntity.getSsaEmployeeName());
+		}
+
+		Map<String, String> finalEmployeeParkingSpotMap = new HashMap<String, String>();
+
+		int i = 0;
+		for (SsaParkingSpots ssaParkingSpotsEntity : ssaParkingSpotsEntityList) {
+			// if(!ssaParkingSpotsDetailsDTO.getVisitorParking()){// if not a
+			// visitor parking , then do the normal stuff
+			if ("NULL".equals(ssaParkingSpotsEntity.getOriginalParkingOwnerName())
+					|| !employeePresentMap.get(ssaParkingSpotsEntity.getOriginalParkingOwnerName())) {// usual
+																										// suspects
+																										// need
+																										// parking
+				if (!(ssaParkingSpotsEntity.getIsVisitorParking() == 1 ? true : false)) {
+					finalEmployeeParkingSpotMap.put(notUsualSuspectsEmployeeDTOList.get(i).getSsaEmployeeName(),
+							ssaParkingSpotsEntity.getSsaParkingNumber());
+					i++;
+				} else {// in case of visitor parking, parking label should
+						// match employee full name
+					if (employeeNameFullNameMap.get(ssaParkingSpotsEntity.getParkingLabel()) != null) {
+						finalEmployeeParkingSpotMap.put(
+								employeeNameFullNameMap.get(ssaParkingSpotsEntity.getParkingLabel()),
+								ssaParkingSpotsEntity.getSsaParkingNumber());
+					} else {
+						System.out.println(
+								"The visitor employee name does not match the string in the parking comments for that visitor parkingID="
+										+ ssaParkingSpotsEntity.getSsaParkingNumber());
+					}
+				}
+
+			} else {// usual suspect is present
+				finalEmployeeParkingSpotMap.put(ssaParkingSpotsEntity.getOriginalParkingOwnerName(),
+						ssaParkingSpotsEntity.getSsaParkingNumber());
+			}
+		}
+
+		System.out.println(finalEmployeeParkingSpotMap.size());
+		for (Map.Entry<String, String> itr : finalEmployeeParkingSpotMap.entrySet()) {
+			SsaEmployees employeeEntity = ssaParkingDao.fetchEmployeeByEmployeeShortName(itr.getKey());
+			SsaParkingSpots parkingSpotEntity = ssaParkingDao.fetchParkingSpotByNumber(itr.getValue());
+
+			SsaEmployeeParkingMappingId mapID = new SsaEmployeeParkingMappingId();
+			mapID.setSsaEmployeeId(employeeEntity.getSsaEmployeesId());
+			mapID.setSsaParkingSpotId(parkingSpotEntity.getSsaParkingSpotsId());
+
+			SsaEmployeeParkingMapping mappingEntity = new SsaEmployeeParkingMapping();
+			mappingEntity.setId(mapID);
+			em.persist(mappingEntity);
+			
+			System.out.println("Employee Name ==" + itr.getKey() + "Assigned parking ==" + itr.getValue());
+
+		}
+		jpaUtil.commitTransaction();
+
+	}
+
+
+
+
+	@Override
+	public SsaEmployeeParkingMapping fetchParkingDetailsForEmployeeByIdAndParkingSpotId(Integer employeeID,
+			Integer parkingSpotID) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+
+
+	@Override
+	public SsaEmployeeParkingMapping fetchParkingDetailForEmployeeByName(String employeeName) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public void allocateParkingSpotInWorkspace(SsaEmployees employeeEntity, SsaParkingSpots parkingEntity) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+	
+	
 	
 	/*public static void main(String[] args) {
 		boolean bool1 = true;

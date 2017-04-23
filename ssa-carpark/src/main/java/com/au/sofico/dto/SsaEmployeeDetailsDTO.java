@@ -19,6 +19,9 @@ public class SsaEmployeeDetailsDTO {
 	private String employeeGroupEmailAddress;
 	private boolean needsParking;
 
+
+	
+
 	public String getEmployeeName() {
 		return employeeName;
 	}

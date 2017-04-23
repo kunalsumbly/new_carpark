@@ -21,9 +21,14 @@ public class SsaEmployeeParkingMapping implements java.io.Serializable {
 
 	private SsaEmployeeParkingMappingId id;
 	
+	
+	
 	private SsaEmployees ssaEmployees;
 	private SsaParkingSpots ssaParkingSpots;
 
+	
+	
+	
 	public SsaEmployeeParkingMapping() {
 	}
 
@@ -36,6 +41,7 @@ public class SsaEmployeeParkingMapping implements java.io.Serializable {
 		this.id = id;
 		this.ssaEmployees = ssaEmployees;
 		this.ssaParkingSpots = ssaParkingSpots;
+		
 	}
 
 	@EmbeddedId

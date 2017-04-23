@@ -37,7 +37,29 @@ public class SsaEmployees implements java.io.Serializable {
 	@Column(name = "group_email")
 	private String groupEmail;
 	
-	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.PERSIST)
+	@Column(name = "ssa_employee_full_name")
+	private String ssaEmployeeFullName;
+	
+	@Column(name = "needs_parking")
+	private Integer needsParking;
+	
+	public Integer getNeedsParking() {
+		return needsParking;
+	}
+
+	public void setNeedsParking(Integer needsParking) {
+		this.needsParking = needsParking;
+	}
+
+	public String getSsaEmployeeFullName() {
+		return ssaEmployeeFullName;
+	}
+
+	public void setSsaEmployeeFullName(String ssaEmployeeFullName) {
+		this.ssaEmployeeFullName = ssaEmployeeFullName;
+	}
+
+	@OneToOne(fetch=FetchType.LAZY)
 	  @JoinTable(
 	      name="ssa_employee_parking_mapping",
 	      joinColumns=

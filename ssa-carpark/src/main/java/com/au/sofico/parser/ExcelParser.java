@@ -66,8 +66,8 @@ public class ExcelParser extends GenericParser{
 								if(DateUtil.isCellDateFormatted(cell)){
 									SimpleDateFormat sf = new SimpleDateFormat(DATE_FORMAT);											
 									oneLine.append(sf.format(cell.getDateCellValue())).append("|~|");
-								}else{
-									oneLine.append(cell.getNumericCellValue()).append("|~|");
+								}else{									
+									oneLine.append((int)cell.getNumericCellValue()).append("|~|");
 								}
 								break;
 							case Cell.CELL_TYPE_BLANK:
