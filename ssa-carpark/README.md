@@ -3,6 +3,19 @@ ssa-carpark
 
 What is it?
 -----------
+This is the car park space allocation project for my current employer. I have started this as a side project. The goal of this project is to create a web-app which will give an interface to do the following:-
+
+1) help the users (admin role) to create new employees and new car parks
+2) allocate the car parks to the employees
+3) Send notifications to the employees about their allocated car parks
+4) Allow employees with allocated car parks to reject the parking , notify the system and allow the system to re-allocate the car parks
+
+Technology stack:-
+1) Java, Spring Core, Spring MVC, maybe Spring Boot
+2) Maven 
+3) Hibernate with JPA
+4) For UI Smart GWT which is based on Google WebToolkit
+
 
 This is your project! It is a sample, deployable Maven 3 project to help you get your foot in the door developing with Spring on JBoss Enterprise Application Platform 6 or JBoss AS 7.1. 
 
